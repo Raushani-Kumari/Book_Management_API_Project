@@ -36,3 +36,8 @@
 
 
 
+/* POST REQUEST
+1. Add new Book -- DONE
+2. Add new Author --DONE
+3. Add new Publication 
+*/

@@ -1,13 +1,18 @@
 const express = require("express");
 
+// need bodyparser for posting request
+var bodyParser = require("body-parser");
+
 // database
 const db = require("./database");
-const { realpathSync } = require("fs");
-const { get } = require("http");
-const { publicDecrypt } = require("crypto");
 
 // initialise express
 const book_emporium = express();
+
+// bodyParser is used to parse the body and allows express to convert the body in json
+// urlencoded({extended:true}) means the url passed can contain any strings,objects. 
+book_emporium.use(bodyParser.urlencoded({extended:true}));
+book_emporium.use(bodyParser.json());
 
 /*
 To get all the books
@@ -100,7 +105,7 @@ Access          Public
 Parameter       id
 Methods         Get
 
-});
+
 */
 
 book_emporium.get("/author/:id", (req,res) => {
@@ -121,7 +126,7 @@ Description     Get specific author based on books
 Access          Public
 Parameter       isbn
 Methods         Get
-});
+
 */
 
 book_emporium.get("/author/book/:isbn", (req,res) => {
@@ -144,7 +149,7 @@ Description     Get all the publication
 Access          Public
 Parameter       NONE
 Methods         Get
-});
+
 */
 book_emporium.get("/publication" , (req,res) =>{
     return res.json({publication : db.publication})
@@ -189,7 +194,61 @@ book_emporium.get("/publication/book/:isbn",(req,res) => {
     }
     return res.json({publication :getSpecificPublication});
 
-})
+});
+
+
+// POST
+/*
+ADD NEW BOOK
+
+Route           /book/new
+Description     Add new book
+Access          Public
+Parameter       NONE
+Methods         POST
+*/
+
+book_emporium.post("/book/new", (req, res) => {
+//    req.body - to fetch the body
+    const newBook = req.body;
+    // adding new book i.e pushing the newbook in database
+    db.books.push(newBook);
+    // returning the updated result
+    return res.json({updateBooks : db.books});
+});
+
+/*
+To add new AUTHOR
+Route           /author/new
+Description     Add new author
+Access          Public
+Parameter       NONE
+Methods         POST
+
+*/
+book_emporium.post("/author/new", (req,res) => {
+    // to fetch the body
+    const newAuthor = req.body;
+    db.author.push(newAuthor);
+    return res.json(db.author);
+});
+
+
+/*
+To add new PUBLICATION
+Route           /publication/new
+Description     Add new PUBLICATION
+Access          Public
+Parameter       NONE
+Methods         POST
+
+*/
+
+book_emporium.post("/publication/new", (req,res) => {
+    const newPublication = req.body;
+    db.publication.push(newPublication);
+    return res.json(db.publication);
+});
 
 book_emporium.listen(1600, () => {
     console.log("Server is running");
