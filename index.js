@@ -99,7 +99,7 @@ book_emporium.get("/author", (req,res) =>{
 
 /*
 To get a specific author
-Route           /author/id
+Route           /author
 Description     Get specific author
 Access          Public
 Parameter       id
@@ -121,7 +121,7 @@ book_emporium.get("/author/:id", (req,res) => {
 
 /*
  To get a list of authors based on BOOKS
-Route           /author/book/isbn
+Route           /author/book/
 Description     Get specific author based on books
 Access          Public
 Parameter       isbn
@@ -157,7 +157,7 @@ book_emporium.get("/publication" , (req,res) =>{
 
 /*
 To get a specific publication
-Route           /publication/id
+Route           /publication
 Description     Get specific publication
 Access          Public
 Parameter       id
@@ -178,7 +178,7 @@ book_emporium.get("/publication/:id", (req, res) =>{
 
 /*
 To get list of publication based on books
-Route           /publication/book/isbn
+Route           /publication/book
 Description     Get list of publication based on books
 Access          Public
 Parameter       isbn
@@ -234,7 +234,7 @@ book_emporium.post("/author/new", (req,res) => {
 });
 
 
-/*
+/*      POST
 To add new PUBLICATION
 Route           /publication/new
 Description     Add new PUBLICATION
@@ -248,6 +248,58 @@ book_emporium.post("/publication/new", (req,res) => {
     const newPublication = req.body;
     db.publication.push(newPublication);
     return res.json(db.publication);
+});
+
+/*         PUT
+Route           /publication/update/book
+Description     Update/Add new publication
+Access          Public
+Parameter       isbn
+Methods         PUT
+
+*/
+book_emporium.put("/publication/update/book/:isbn", (req,res) => {
+    // update publication db
+    db.publication.forEach((pub)=> {
+        if(pub.id === req.body.pubID){
+            return pub.books.push(req.params.isbn);
+        }
+    });
+    // upadte the book database
+    db.books.forEach((book) => {
+        if(book.ISBN === req.params.isbn){
+            book.publications = req.body.pubID;
+            return;
+        }
+    });
+
+    return res.json(
+        {
+            books :db.books,
+            publications : db.publication,
+            message : "Successfully updated publications"
+        }
+    );
+});
+
+
+/*         DELETE
+Route           /book/delete
+Description     delete a book
+Access          Public
+Parameter       isbn
+Methods          DELETE
+
+*/
+
+book_emporium.delete("/book/delete/:isbn", (req,res) => {
+    // book that does not match with the isbn is sent and rest will be filtered out
+
+    const updateBookDb = db.books.filter(
+        (book) => book.ISBN !== req.params.isbn);
+        db.books = updateBookDb;
+
+        return res.json({books : db.books});
 });
 
 book_emporium.listen(1600, () => {

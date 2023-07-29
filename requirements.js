@@ -41,3 +41,17 @@
 2. Add new Author --DONE
 3. Add new Publication 
 */
+
+
+/* 
+--------------PUT-------------
+update book details if author is changed
+*/
+
+
+/*
+----------------DELETE----------
+1. Delete a book -- DONE
+2. Delete author from book
+3. Delete author from book and related book from author
+*/
